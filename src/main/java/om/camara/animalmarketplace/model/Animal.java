@@ -1,10 +1,6 @@
 package om.camara.animalmarketplace.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "animals")
@@ -15,6 +11,7 @@ public class Animal {
     private Long id;
     private String titre;
     private String description;
+    @Column(name = "image_url")
     private String imageUrl;
 
     // Constructeurs

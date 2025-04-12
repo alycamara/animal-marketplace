@@ -19,6 +19,10 @@ public class AnimalController {
     @GetMapping
     public String listAnnonces(Model model) {
         model.addAttribute("annonces", animalService.findAll());
+       for (Animal animal : animalService.findAll()) {
+           System.out.println( "animal : " +animal.getImageUrl());
+
+       }
         return "annonces";
     }
 
