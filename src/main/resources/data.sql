@@ -47,7 +47,7 @@ INSERT INTO photo (url, uploaded_at, ad_id) VALUES
 ('/images/chevre.JPEG', CURRENT_TIMESTAMP, 6),
 ('/images/cheval.JPEG', CURRENT_TIMESTAMP, 7),
 ('/images/lapin.JPEG', CURRENT_TIMESTAMP, 8),
-('/images/ane/JPEG', CURRENT_TIMESTAMP, 9),
+('/images/ane.JPEG', CURRENT_TIMESTAMP, 9),
 ('/images/mouton.JPEG', CURRENT_TIMESTAMP, 10);
 
 -- Insertion de données dans la table contact_request
@@ -62,3 +62,8 @@ INSERT INTO contact_request (ad_id, sender_id, content, sent_at) VALUES
 (8, 5, 'I would like to buy the Dutch rabbit.', CURRENT_TIMESTAMP),
 (9, 3, 'Interested in the Bulldog.', CURRENT_TIMESTAMP),
 (10, 5, 'Can I see the Maine Coon?', CURRENT_TIMESTAMP);
+
+
+UPDATE photo
+SET url = '/images/lapin.JPEG'
+WHERE id = 8;

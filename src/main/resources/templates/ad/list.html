@@ -71,6 +71,7 @@
                     <p class="card-text" th:text="${ad.title}">Description de l'annonce</p>
                     <p class="card-text"><strong>Prix:</strong> <span th:text="${ad.price}"></span> €</p>
                     <p class="card-text"><strong>Lieu:</strong> <span th:text="${ad.location}"></span></p>
+                    <p class="card-text"><strong>Mis en ligne le :</strong> <span th:text="${ad.createdAt}"></span></p>
                 </div>
                 <div class="card-footer">
                     <a th:href="@{/ads/{id}(id=${ad.id})}" class="btn btn-primary">Voir l'annonce</a>
