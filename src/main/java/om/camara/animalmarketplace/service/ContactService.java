@@ -1,7 +1,7 @@
 package om.camara.animalmarketplace.service;
 
 
-import om.camara.animalmarketplace.model.ContactMessage;
+import om.camara.animalmarketplace.model.ContactRequest;
 import om.camara.animalmarketplace.repository.ContactMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,15 +14,15 @@ public class ContactService {
     @Autowired
     private ContactMessageRepository contactMessageRepository;
 
-    public List<ContactMessage> findAll() {
+    public List<ContactRequest> findAll() {
         return contactMessageRepository.findAll();
     }
 
-    public ContactMessage findById(Long id) {
+    public ContactRequest findById(Long id) {
         return contactMessageRepository.findById(id).orElse(null);
     }
 
-    public ContactMessage save(ContactMessage message) {
+    public ContactRequest save(ContactRequest message) {
         return contactMessageRepository.save(message);
     }
 

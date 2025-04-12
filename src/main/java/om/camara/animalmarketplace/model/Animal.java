@@ -3,28 +3,22 @@ package om.camara.animalmarketplace.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "animals")
+@Table(name = "animal")
 public class Animal {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String titre;
-    private String description;
-    @Column(name = "image_url")
-    private String imageUrl;
 
-    // Constructeurs
-    public Animal() {
-    }
+    private String species;
+    private String breed;
+    private int age;
 
-    public Animal(String titre, String description, String imageUrl) {
-        this.titre = titre;
-        this.description = description;
-        this.imageUrl = imageUrl;
-    }
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
 
-    // Getters et Setters
+    // Getters and Setters
+
+
     public Long getId() {
         return id;
     }
@@ -33,27 +27,39 @@ public class Animal {
         this.id = id;
     }
 
-    public String getTitre() {
-        return titre;
+    public String getSpecies() {
+        return species;
     }
 
-    public void setTitre(String titre) {
-        this.titre = titre;
+    public void setSpecies(String species) {
+        this.species = species;
     }
 
-    public String getDescription() {
-        return description;
+    public String getBreed() {
+        return breed;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBreed(String breed) {
+        this.breed = breed;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public int getAge() {
+        return age;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setAge(int age) {
+        this.age = age;
     }
+
+    public Sex getSex() {
+        return sex;
+    }
+
+    public void setSex(Sex sex) {
+        this.sex = sex;
+    }
+}
+
+enum Sex {
+    MALE, FEMALE
 }

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Détail de l'annonce</title>
+</head>
+<body>
+<h1 th:text="${ad.title}">Titre de l'annonce</h1>
+<p th:text="'Prix: ' + ${ad.price}">Prix</p>
+<p th:text="'Localisation: ' + ${ad.location}">Localisation</p>
+<a th:href="@{/ads/edit/{id}(id=${ad.id})}">Modifier</a>
+<a th:href="@{/ads/delete/{id}(id=${ad.id})}">Supprimer</a>
+<a href="/ads">Retour à la liste</a>
+</body>
+</html>
