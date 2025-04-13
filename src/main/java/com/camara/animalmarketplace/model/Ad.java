@@ -2,6 +2,7 @@ package com.camara.animalmarketplace.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,16 +21,16 @@ public class Ad {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "animal_id", nullable = true)
-    private Animal animal;
+    private Animal animal = new Animal();
 
-    @ManyToOne
+    @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "seller_id", nullable = false)
-    private User seller;
+    private User seller = new User();
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Photo> photos;
+    private List<Photo> photos = new ArrayList<>();
 
     // Getters and Setters
 
