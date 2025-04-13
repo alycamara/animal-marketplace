@@ -75,7 +75,3 @@ public class User {
         this.createdAt = createdAt;
     }
 }
-
-enum Role {
-    BUYER, SELLER
-}

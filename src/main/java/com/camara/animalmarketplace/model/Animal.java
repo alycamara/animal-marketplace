@@ -60,6 +60,4 @@ public class Animal {
     }
 }
 
-enum Sex {
-    MALE, FEMALE
-}
+
