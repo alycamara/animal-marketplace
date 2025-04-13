@@ -1,0 +1,46 @@
+-- 1. Utilisateur
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(100),
+    role ENUM('BUYER', 'SELLER'),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Animal
+CREATE TABLE animal (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    species VARCHAR(50),
+    breed VARCHAR(100),
+    age INT,
+    sex ENUM('MALE', 'FEMALE')
+);
+
+-- 3. Annonce
+CREATE TABLE ad (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    price DECIMAL(10, 2),
+    location VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    animal_id CHAR(36) REFERENCES animal(id) ON DELETE SET NULL,
+    seller_id CHAR(36) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 4. Photo
+CREATE TABLE photo (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    url TEXT NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ad_id CHAR(36) REFERENCES ad(id) ON DELETE CASCADE
+);
+
+-- 5. Contact / Message
+CREATE TABLE contact_request (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ad_id CHAR(36) REFERENCES ad(id) ON DELETE CASCADE,
+    sender_id CHAR(36) REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

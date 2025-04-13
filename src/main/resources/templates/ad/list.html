@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Annonces - Annonces Animaux</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card-custom {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-body-custom {
+            flex: 1;
+            overflow: hidden;
+        }
+        .card-img-top {
+            object-fit: cover;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Annonces Animaux</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Accueil</a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Annonces</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+            </li>
+        </ul>
+</nav>
+<div class="container mt-5">
+    <h1>Liste des annonces</h1>
+    <form method="GET" action="/ads">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="species">Espèce</label>
+                <input type="text" class="form-control" id="species" name="species" placeholder="Espèce">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="location">Lieu</label>
+                <input type="text" class="form-control" id="location" name="location" placeholder="Lieu">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="sort">Trier par</label>
+                <select class="form-control" id="sort" name="sort">
+                    <option value="price">Prix</option>
+                    <option value="location">Lieu</option>
+                    <option value="created_at">Date de création</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+    <div class="row mt-4">
+        <div class="col-md-4 mb-4" th:each="ad : ${ads}">
+            <div class="card card-custom">
+                <img th:src="${ad.photos[0].url}" class="card-img-top" alt="Image de l'animal">
+                <div class="card-body card-body-custom">
+                    <h5 class="card-title" th:text="${ad.animal.species}">Titre de l'annonce</h5>
+                    <p class="card-text" th:text="${ad.title}">Description de l'annonce</p>
+                    <p class="card-text"><strong>Prix:</strong> <span th:text="${ad.price}"></span> €</p>
+                    <p class="card-text"><strong>Lieu:</strong> <span th:text="${ad.location}"></span></p>
+                    <p class="card-text"><strong>Mis en ligne le :</strong> <span th:text="${ad.createdAt}"></span></p>
+                </div>
+                <div class="card-footer">
+                    <a th:href="@{/ads/{id}(id=${ad.id})}" class="btn btn-primary">Voir l'annonce</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

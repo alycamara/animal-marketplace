@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header text-center">
+            <h1 th:text="${ad.title}">Titre de l'annonce</h1>
+        </div>
+        <div class="card-body">
+
+            <p class="fs-5"><strong>Prix:</strong> <span th:text="${ad.price}"></span></p>
+            <p class="fs-5"><strong>Localisation:</strong> <span th:text="${ad.location}"></span></p>
+            <p class="fs-5"><strong>Date de création:</strong> <span th:text="${ad.createdAt}"></span></p>
+
+
+            <!--<p class="fs-5" th:text="'Prix: ' + ${ad.price}">Prix</p>
+            <p class="fs-5" th:text="'Localisation: ' + ${ad.location}">Localisation</p>
+            &lt;!&ndash;            <p class="fs-5" th:text="'Date de création: ' + ${#dates.format(ad.createdAt, 'dd/MM/yyyy HH:mm')}">&ndash;&gt;
+            <p class="fs-5" th:text="'Date de création: ' + ${ad.createdAt}">
+                Date de création
+            </p>-->
+
+            <!-- Section Animal -->
+            <div class="mt-4">
+                <h3>Informations sur l'animal</h3>
+                <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.animal.species}"></span></p>
+                <p class="card-text"><strong>Type: </strong> <span th:text="${ad.animal.breed}"></span></p>
+                <p class="card-text"><strong>Age:</strong> <span th:text="${ad.animal.age}"></span> ans</p>
+                <!--<p class="fs-5" th:text="'Nom: ' + ${ad.animal.species}">Nom de l'animal</p>
+                <p class="fs-5" th:text="'Type: ' + ${ad.animal.breed}">Type d'animal</p>
+                <p class="fs-5" th:text="'Âge: ' + ${ad.animal.age} + ' ans'">Âge de l'animal</p>-->
+            </div>
+
+
+            <!-- Image Carousel -->
+            <div id="adImagesCarousel" class="carousel slide mt-4" data-ride="carousel">
+                <!-- Indicateurs -->
+                <ol class="carousel-indicators">
+                   <li th:each="photo, iterStat : ${ad.photos}" th:data-target="'#adImagesCarousel'" th:data-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0 ? 'active' : ''}"></li>
+                </ol>
+
+                <!-- Images du carousel -->
+                <div class="carousel-inner">
+                    <div class="carousel-item" th:each="photo, iterStat : ${ad.photos}" th:classappend="${iterStat.index == 0 ? 'active' : ''}">
+                        <img th:src="${photo.url}" class="d-block w-100" alt="Image de l'annonce">
+                    </div>
+                </div>
+
+                <!-- Contrôles -->
+                <a class="carousel-control-prev" href="#adImagesCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Précédent</span>
+                </a>
+                <a class="carousel-control-next" href="#adImagesCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Suivant</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a class="btn btn-primary me-2" th:href="@{/ads/edit/{id}(id=${ad.id})}">Modifier</a>
+            <a class="btn btn-danger me-2" th:href="@{/ads/delete/{id}(id=${ad.id})}">Supprimer</a>
+            <a class="btn btn-secondary" href="/ads">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>
