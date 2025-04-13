@@ -2,19 +2,26 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+
 </head>
 <body>
 <div class="container mt-5">
     <div class="card">
         <div class="card-header text-center">
-            <h1 th:text="${ad.title}">Titre de l'annonce</h1>
+            <p class="h4 text-primary text-center" th:text="${ad.title}">Titre de l'annonce</p>
         </div>
         <div class="card-body">
 
-            <p class="fs-5"><strong>Prix:</strong> <span th:text="${ad.price}"></span></p>
-            <p class="fs-5"><strong>Localisation:</strong> <span th:text="${ad.location}"></span></p>
-            <p class="fs-5"><strong>Date de création:</strong> <span th:text="${ad.createdAt}"></span></p>
-
+           <div class="card mt-3">
+               <div class="card-header text-center">
+               </div>
+               <div class="card-body">
+                   <p class="card-text"><strong>Prix:</strong> <span th:text="${ad.price}"></span> €</p>
+                   <p class="card-text"><strong>Localisation:</strong> <span th:text="${ad.location}"></span></p>
+                   <p class="card-text"><strong>Date de création:</strong> <span th:text="${ad.createdAt}"></span></p>
+               </div>
+           </div>
 
             <!--<p class="fs-5" th:text="'Prix: ' + ${ad.price}">Prix</p>
             <p class="fs-5" th:text="'Localisation: ' + ${ad.location}">Localisation</p>
@@ -24,19 +31,34 @@
             </p>-->
 
             <!-- Section Animal -->
-            <div class="mt-4">
-                <h3>Informations sur l'animal</h3>
-                <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.animal.species}"></span></p>
-                <p class="card-text"><strong>Type: </strong> <span th:text="${ad.animal.breed}"></span></p>
-                <p class="card-text"><strong>Age:</strong> <span th:text="${ad.animal.age}"></span> ans</p>
-                <!--<p class="fs-5" th:text="'Nom: ' + ${ad.animal.species}">Nom de l'animal</p>
-                <p class="fs-5" th:text="'Type: ' + ${ad.animal.breed}">Type d'animal</p>
-                <p class="fs-5" th:text="'Âge: ' + ${ad.animal.age} + ' ans'">Âge de l'animal</p>-->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <p class="h6"> Informations sur l'animal</p>
+                </div>
+                <div class="card-body" th:if="${ad.animal != null}">
+                    <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.animal.species}"></span></p>
+                    <p class="card-text"><strong>Type: </strong> <span th:text="${ad.animal.breed}"></span></p>
+                    <p class="card-text"><strong>Age:</strong> <span th:text="${ad.animal.age}"></span> ans</p>
+
+                </div>
+            </div>
+
+            <!-- Section Sur le vendeur -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <p class="h6"> Informations sur le vendeur</p>
+                </div>
+                <div class="card-body" th:if="${ad.seller != null}">
+                    <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.seller.name}"></span></p>
+                    <p class="card-text"><strong>Téléphone: </strong> </p>
+                    <p class="card-text"><strong>Email:</strong> <span th:text="${ad.seller.email}"></span> </p>
+
+                </div>
             </div>
 
 
             <!-- Image Carousel -->
-            <div id="adImagesCarousel" class="carousel slide mt-4" data-ride="carousel">
+            <div id="adImagesCarousel" class="carousel slide mt-4" data-ride="carousel" th:if="${ad.photos.size() > 0}">
                 <!-- Indicateurs -->
                 <ol class="carousel-indicators">
                    <li th:each="photo, iterStat : ${ad.photos}" th:data-target="'#adImagesCarousel'" th:data-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0 ? 'active' : ''}"></li>
