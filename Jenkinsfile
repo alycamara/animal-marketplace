@@ -104,9 +104,9 @@ String getEnvName(String branchName) {
 
 String getHTTPPort(String branchName) {
     if (branchName == 'master') {
-        return '9003'
+        return '9007'
     }
-    return (branchName == 'develop') ? '9002' : '9001'
+    return (branchName == 'develop') ? '9006' : '9005'
 }
 
 String getTag(String buildNumber, String branchName) {
