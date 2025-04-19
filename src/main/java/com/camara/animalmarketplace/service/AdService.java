@@ -7,7 +7,6 @@ import com.camara.animalmarketplace.repository.AnimalRepository;
 import com.camara.animalmarketplace.repository.PhotoRepository;
 import com.camara.animalmarketplace.repository.UserRepository;
 import com.camara.animalmarketplace.specification.AdSpecifications;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service pour gérer les annonces
+ */
 @Service
 public class AdService {
 
@@ -35,6 +37,14 @@ public class AdService {
         this.photoRepository = photoRepository;
     }
 
+    /**
+     * Récupère toutes les annonces
+     *
+     * @param species
+     * @param location
+     * @param sort
+     * @return
+     */
     public List<Ad> findAds(String species, String location, String sort) {
         Specification<Ad> spec = Specification.where(null);
 
@@ -62,11 +72,24 @@ public class AdService {
         return adRepository.findAll(spec, pageable).getContent();
     }
 
+    /**
+     * Récupère une annonce par son ID
+     *
+     * @param id
+     * @return
+     */
 
     public Optional<Ad> getAdById(Long id) {
         return adRepository.findById(id);
     }
 
+    /**
+     * Crée une annonce
+     *
+     * @param ad
+     * @param files
+     * @return
+     */
     public Ad createAd(Ad ad, MultipartFile[] files) {
         if (ad.getSeller() != null && ad.getSeller().getId() == null) {
             ad.getSeller().setRole(Role.SELLER);
@@ -82,7 +105,14 @@ public class AdService {
         return adRepository.save(ad);
     }
 
-
+    /**
+     * Met à jour une annonce
+     *
+     * @param id
+     * @param adDetails
+     * @param files
+     * @param deletePhotoIds
+     */
     public void updateAd(Long id, Ad adDetails, MultipartFile[] files, List<Long> deletePhotoIds) {
         Ad ad = adRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ad not found"));
 
@@ -108,23 +138,36 @@ public class AdService {
         // enregistrement des nouveaux photos
         savePhotos(files, ad);
 
-
         // Sauvegarde de l'annonce
         adRepository.save(ad);
     }
 
+    /**
+     * Supprime une annonce
+     *
+     * @param id
+     */
+
     public void deleteAd(Long id) {
         Ad ad = adRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ad not found"));
         List<Photo> photos = ad.getPhotos();
-        adRepository.delete(ad);
-        // Suppression des photos de l'annonce
+
+        // Suppression des photos de l'annonce dans S3
         if (photos != null && !photos.isEmpty()) {
-            photos.forEach(photo -> {
-                s3Service.deleteFile(photo.getFileName());
-            });
+            photos.forEach(photo -> s3Service.deleteFile(photo.getFileName()));
         }
+
+        // Suppression de l'annonce et des photos associées
+        photoRepository.deleteAll(photos);
+        adRepository.delete(ad);
     }
 
+    /**
+     * Met à jour ou crée un vendeur
+     *
+     * @param sellerDetails
+     * @return
+     */
     private User updateOrCreateSeller(User sellerDetails) {
         if (sellerDetails.getId() != null) {
             User existingUser = userRepository.findById(sellerDetails.getId())
@@ -141,6 +184,12 @@ public class AdService {
         }
     }
 
+    /**
+     * Met à jour ou crée un animal
+     *
+     * @param animalDetails
+     * @return
+     */
     private Animal updateOrCreateAnimal(Animal animalDetails) {
         if (animalDetails.getId() != null) {
             Animal existingAnimal = animalRepository.findById(animalDetails.getId())
@@ -159,6 +208,12 @@ public class AdService {
         }
     }
 
+    /**
+     * Sauvegarde les photos de l'annonce
+     *
+     * @param files
+     * @param ad
+     */
     private void savePhotos(MultipartFile[] files, Ad ad) {
         for (MultipartFile file : files) {
             if (!file.isEmpty()) {
@@ -173,16 +228,22 @@ public class AdService {
         }
     }
 
+    /**
+     * Supprime les photos de l'annonce
+     *
+     * @param deletePhotoIds
+     * @param ad
+     */
     private void deleteIdsPhotos(List<Long> deletePhotoIds, Ad ad) {
         if (deletePhotoIds != null && !deletePhotoIds.isEmpty()) {
-            for (Long id : deletePhotoIds) {
-                Photo photo = photoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Photo not found"));
-                photoRepository.delete(photo);
-                s3Service.deleteFile(photo.getFileName());
-                // Si la photo est supprimée, on peut aussi la retirer de l'annonce
-                ad.getPhotos().remove(photo);
-
-            }
+            deletePhotoIds.stream()
+                    .map(id -> photoRepository.findById(id)
+                            .orElseThrow(() -> new ResourceNotFoundException("Photo not found with ID: " + id)))
+                    .forEach(photo -> {
+                        photoRepository.delete(photo);
+                        s3Service.deleteFile(photo.getFileName());
+                        ad.getPhotos().remove(photo); // Retirer la photo de l'annonce
+                    });
         }
     }
 }
