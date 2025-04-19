@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Redirige les utilisateurs vers la liste des annonces.
  */
 @Controller
-public class HomeController {
+public class DefaultController {
 
     /**
      * Gère la requête GET pour la page d'accueil.

@@ -83,8 +83,8 @@
             </div>
         </div>
         <div class="card-footer text-center">
-            <a class="btn btn-primary me-2" th:href="@{/ads/edit/{id}(id=${ad.id})}">Modifier</a>
-            <a class="btn btn-danger me-2" th:href="@{/ads/delete/{id}(id=${ad.id})}">Supprimer</a>
+            <a class="btn btn-primary me-2" th:href="@{'/login?redirect=/ads/edit/' + ${ad.id}}">Modifier</a>
+            <a class="btn btn-danger me-2" th:href="@{'/login?redirect=/ads/delete/' + ${ad.id}}">Supprimer</a>
             <a class="btn btn-secondary" href="/ads">Retour à la liste</a>
         </div>
     </div>
