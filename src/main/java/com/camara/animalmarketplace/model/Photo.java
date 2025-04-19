@@ -16,6 +16,9 @@ public class Photo {
     @Column(name = "uploaded_at", nullable = false, updatable = false)
     private LocalDateTime uploadedAt = LocalDateTime.now();
 
+    @Column(name = "file_name", nullable = false)
+    private String fileName;
+
     @ManyToOne
     @JoinColumn(name = "ad_id", nullable = false)
     private Ad ad;
@@ -51,7 +54,13 @@ public class Photo {
     public void setAd(Ad ad) {
         this.ad = ad;
     }
-    // Getters and Setters
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 }
 

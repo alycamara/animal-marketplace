@@ -7,7 +7,7 @@
 <body>
 <div class="container mt-5">
     <h1 class="text-center text-primary mb-4">Créer une nouvelle annonce</h1>
-    <form th:action="@{/ads}" th:object="${ad}" method="post" class="needs-validation" novalidate>
+    <form th:action="@{/ads}" th:object="${ad}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
         <!-- Section Annonce -->
         <div class="card mb-4">
             <div class="card-header bg-primary text-white">
@@ -76,6 +76,19 @@
                     <label for="sellerPhone">Téléphone:</label>
                     <input type="text" id="sellerPhone" th:field="*{seller.phone}" class="form-control" placeholder="Téléphone du vendeur">
                 </div>-->
+            </div>
+        </div>
+
+        <!-- Photos -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5>Photos</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="formFileMultiple" class="form-label">Ajouter des photos de l'annonce</label>
+                    <input type="file" id="formFileMultiple" class="form-control" name="uploadedPhotos" multiple>
+                </div>
             </div>
         </div>
 
