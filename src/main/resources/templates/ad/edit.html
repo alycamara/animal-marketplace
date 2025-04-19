@@ -9,7 +9,7 @@
 <body>
 <div class="container mt-5">
     <h1 class="text-center mb-4">Modifier l'annonce</h1>
-    <form th:action="@{/ads/update/{id}(id=${ad.id})}" th:object="${ad}" method="post">
+    <form th:action="@{/ads/update/{id}(id=${ad.id})}" th:object="${ad}" method="post" enctype="multipart/form-data">
         <!-- Informations de l'annonce -->
         <div class="mb-4">
             <label for="title" class="form-label">Titre:</label>
@@ -66,6 +66,41 @@
                 <div class="mb-3">
                     <label for="email" class="form-label">Email:</label>
                     <input type="email" id="email" th:field="*{seller.email}" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <!-- Photos -->
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h2 class="h5">Photos</h2>
+            </div>
+            <div class="card-body">
+                <!-- Tableau des photos existantes -->
+                <table class="table table-bordered">
+                    <thead class="text-center">
+                        <tr>
+                            <th>Nom du fichier</th>
+                            <th>Image</th>
+                            <th>Supprimer</th>
+                        </tr>
+                    </thead>
+                    <tbody th:if="${ad.photos != null && ad.photos.size() > 0}" class="text-center">
+                        <tr th:each="photo : ${ad.photos}">
+                            <td th:text="${#strings.substringBefore(photo.fileName, '.')}">Nom du fichier</td>
+                            <td>
+                                <img th:src="${photo.url}" alt="Photo" style="max-width: 100px; max-height: 100px;" />
+                            </td>
+                            <td>
+                                <input type="checkbox" name="deletePhotos" th:value="${photo.id}" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Ajouter des photos -->
+                <div class="mb-3">
+                    <label for="formFileMultiple" class="form-label">Ajouter des photos de l'annonce</label>
+                    <input class="form-control" type="file" id="formFileMultiple" name="uploadedPhotos" multiple />
                 </div>
             </div>
         </div>
