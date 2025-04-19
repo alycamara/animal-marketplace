@@ -3,14 +3,16 @@ package com.camara.animalmarketplace.controller;
 import com.camara.animalmarketplace.exception.ResourceNotFoundException;
 import com.camara.animalmarketplace.model.Ad;
 import com.camara.animalmarketplace.service.AdService;
+import com.camara.animalmarketplace.service.S3Service;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -21,13 +23,16 @@ public class AdController {
 
     private static final Logger logger = LoggerFactory.getLogger(AdController.class);
 
-    private  final AdService adService;
+    private final AdService adService;
+    private final S3Service s3Service;
 
-    public AdController(AdService adService) {
+    public AdController(AdService adService, S3Service s3Service) {
+
         this.adService = adService;
+        this.s3Service = s3Service;
     }
 
-   @GetMapping()
+    @GetMapping()
     public String getAllAds(@RequestParam(required = false) String species,
                             @RequestParam(required = false) String location,
                             @RequestParam(required = false) String sort,
@@ -52,58 +57,58 @@ public class AdController {
 
 
     @PostMapping
-    public String handleCreateAd(@Valid @ModelAttribute Ad ad, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String handleCreateAd(@Valid @ModelAttribute Ad ad, BindingResult result, RedirectAttributes redirectAttributes, @RequestParam("uploadedPhotos") MultipartFile[] files) {
 
+        logger.info("Création de l'annonce : {}", ad);
         if (result.hasErrors()) {
+            logger.error("Erreur lors de la création de l'annonce : {}", result.getAllErrors());
             return "ad/create"; // Retourne le formulaire avec les erreurs
         }
-        try {
-            adService.createAd(ad); // Sauvegarde de l'annonce
-            redirectAttributes.addFlashAttribute("successMessage", "L'annonce a été créée avec succès !");
-        } catch (Exception e) {
-            logger.error("Une erreur est survenue lors de la création de l'annonce", e);
-            throw e;
-        }
+
+        adService.createAd(ad, files); // Sauvegarde de l'annonce
+        redirectAttributes.addFlashAttribute("successMessage", "L'annonce a été créée avec succès !");
 
         return "redirect:/ads"; // Redirection vers la liste des annonces
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
-        Ad ad = findAdByIdOrThrow (id);
+        Ad ad = findAdByIdOrThrow(id);
         model.addAttribute("ad", ad);
         return "ad/edit";
     }
 
     @PostMapping("/update/{id}")
-    public String handleUpdateAd(@PathVariable Long id, @ModelAttribute Ad adDetails, RedirectAttributes redirectAttributes) {
-
-        try {
-            adService.updateAd(id, adDetails);; // Sauvegarde de l'annonce
-            redirectAttributes.addFlashAttribute("successMessage", "L'annonce a été mis à jour avec succès !");
-        } catch (Exception e) {
-            logger.error("Une erreur est survenue lors de la mise à jour de l'annonce", e);
-            throw e;
+    public String handleUpdateAd(@PathVariable Long id,
+                                 @ModelAttribute Ad adDetails,
+                                 RedirectAttributes redirectAttributes,
+                                 @RequestParam("uploadedPhotos") MultipartFile[] files,
+                                 BindingResult result,
+                                 @RequestParam(value = "deletePhotos", required = false) List<Long> deletePhotoIds) {
+        if (result.hasErrors()) {
+            logger.error("Erreur lors de la mis à jour de l'annonce : {}", result.getAllErrors());
+            return "/update/{id}"; // Retourne le formulaire avec les erreurs
         }
+
+        adService.updateAd(id, adDetails, files, deletePhotoIds); // Mise à jour de l'annonce
+        ; // Sauvegarde de l'annonce
+        redirectAttributes.addFlashAttribute("successMessage", "L'annonce a été mis à jour avec succès !");
 
         return "redirect:/ads"; // Redirection vers la liste des annonces
     }
 
     @GetMapping("/delete/{id}")
     public String showDeleteForm(@PathVariable Long id, Model model) {
-        Ad ad = findAdByIdOrThrow (id);
+        Ad ad = findAdByIdOrThrow(id);
         model.addAttribute("ad", ad);
         return "ad/delete";
     }
 
     @PostMapping("/delete/{id}")
-    public String handleDeleteAd(@PathVariable Long id,@ModelAttribute Ad adDetails, RedirectAttributes redirectAttributes) {
-        try{
-            adService.deleteAd(id);
-            redirectAttributes.addFlashAttribute("successMessage", "L'annonce a été supprimée avec succès !");
-        } catch (Exception e) {
-            logger.error("Une erreur est survenue lors de la supression de l'annonce", e);
-        }
+    public String handleDeleteAd(@PathVariable Long id, @ModelAttribute Ad adDetails, RedirectAttributes redirectAttributes) {
+
+        adService.deleteAd(id);
+        redirectAttributes.addFlashAttribute("successMessage", "L'annonce a été supprimée avec succès !");
 
         return "redirect:/ads";
     }
