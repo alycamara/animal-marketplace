@@ -168,7 +168,7 @@ public class AdService {
      * @param sellerDetails
      * @return
      */
-    private User updateOrCreateSeller(User sellerDetails) {
+    public User updateOrCreateSeller(User sellerDetails) {
         if (sellerDetails.getId() != null) {
             User existingUser = userRepository.findById(sellerDetails.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Seller not found"));
