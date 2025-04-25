@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code  # Étape 1 : Récupération du code source
-        uses: actions/checkout@v4  # Utilisation de l'action officielle pour cloner le dépôt GitHub dans l'environnement de build
+        uses: actions/checkout@v2  # Utilisation de l'action officielle pour cloner le dépôt GitHub dans l'environnement de build
 
       - name: Set up JDK 17  # Étape 2 : Configuration de l'environnement Java
         uses: actions/setup-java@v2  # Utilisation de l'action officielle pour configurer Java
@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'  # Distribution de JDK utilisée (Temurin, une distribution OpenJDK)
 
       - name: Cache Maven dependencies  # Étape 3 : Mise en cache des dépendances Maven
-        uses: actions/cache@v2  # Utilisation de l'action officielle pour mettre en cache les fichiers Maven
+        uses: actions/cache@v4  # Utilisation de l'action officielle pour mettre en cache les fichiers Maven
         with:
           path: ~/.m2  # Chemin du répertoire Maven local à mettre en cache
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}  # Clé unique basée sur le système d'exploitation et le hash du fichier `pom.xml`
