@@ -3,7 +3,7 @@ name: Deploy to Elastic Beanstalk  # Nom du workflow, visible dans l'interface G
 on:
   push:
     branches:
-      - features  # Le workflow se déclenche uniquement lorsqu'un push est effectué sur la branche "master"
+      - features  # Le workflow se déclenche uniquement lorsqu'un push est effectué sur la branche "features"
 
 jobs:
   deploy:  # Nom du job, ici "deploy"
@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code  # Étape 1 : Récupération du code source
-        uses: actions/checkout@v2  # Utilisation de l'action officielle pour cloner le dépôt GitHub dans l'environnement de build
+        uses: actions/checkout@v3  # Mise à jour vers la version 3 de l'action officielle
 
       - name: Set up JDK 17  # Étape 2 : Configuration de l'environnement Java
         uses: actions/setup-java@v2  # Utilisation de l'action officielle pour configurer Java
@@ -20,29 +20,30 @@ jobs:
           distribution: 'temurin'  # Distribution de JDK utilisée (Temurin, une distribution OpenJDK)
 
       - name: Cache Maven dependencies  # Étape 3 : Mise en cache des dépendances Maven
-        uses: actions/cache@v4  # Utilisation de l'action officielle pour mettre en cache les fichiers Maven
+        uses: actions/cache@v4  # Utilisation de la version 4 de l'action cache
         with:
           path: ~/.m2  # Chemin du répertoire Maven local à mettre en cache
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}  # Clé unique basée sur le système d'exploitation et le hash du fichier `pom.xml`
           restore-keys: |
             ${{ runner.os }}-m2  # Clé de secours pour restaurer un cache partiel si la clé principale n'est pas trouvée
 
-      - name: Build with Maven  # Étape 4 : Compilation du projet avec Maven
-        run: mvn clean package -DskipTests  # Nettoie les fichiers précédents, compile le projet et génère un fichier JAR sans exécuter les tests
+      - name: Build project  # Étape 4 : Compilation du projet avec Maven
+        run: mvn clean package -DskipTests  # Compile le projet et génère un fichier JAR sans exécuter les tests
 
       - name: Deploy to Elastic Beanstalk  # Étape 5 : Déploiement sur AWS Elastic Beanstalk
-        env:  # Définition des variables d'environnement nécessaires pour AWS CLI
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Clé d'accès AWS (stockée dans les secrets GitHub)
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Clé secrète AWS (stockée dans les secrets GitHub)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          zip -r application.zip . -x ".git/*" "target/*" ".github/*"  # Archive le projet dans un fichier ZIP, en excluant certains dossiers inutiles
-          aws elasticbeanstalk create-application-version \  # Crée une nouvelle version de l'application Elastic Beanstalk
-            --application-name "animal-marketplace" \  # Nom de l'application Elastic Beanstalk
-            --version-label "${{ github.sha }}" \  # Version de l'application basée sur le hash du commit GitHub
-            --source-bundle S3Bucket="elasticbeanstalk-${{ secrets.AWS_REGION }}-app-bucket",S3Key="application.zip" \  # Spécifie le bucket S3 et le fichier ZIP
-            --region ${{ secrets.AWS_REGION }}  # Région AWS où se trouve Elastic Beanstalk
-          aws elasticbeanstalk update-environment \  # Met à jour l'environnement Elastic Beanstalk avec la nouvelle version
-            --application-name "animal-marketplace" \  # Nom de l'application Elastic Beanstalk
-            --environment-name "animal-marketplace-env" \  # Nom de l'environnement Elastic Beanstalk
-            --version-label "${{ github.sha }}" \  # Version de l'application à déployer
-            --region ${{ secrets.AWS_REGION }}  # Région AWS où se trouve Elastic Beanstalk
+          zip -r application.zip . -x ".git/*" "target/*" ".github/*"  # Archive le projet dans un fichier ZIP
+          aws elasticbeanstalk create-application-version \
+            --application-name "animal-marketplace" \
+            --version-label "${{ github.sha }}" \
+            --source-bundle S3Bucket="elasticbeanstalk-${{ secrets.AWS_REGION }}-app-bucket",S3Key="application.zip" \
+            --region $AWS_REGION
+          aws elasticbeanstalk update-environment \
+            --application-name "animal-marketplace" \
+            --environment-name "animal-marketplace-env" \
+            --version-label "${{ github.sha }}" \
+            --region $AWS_REGION
