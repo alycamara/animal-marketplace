@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4  # Utilisation de l'action officielle pour cloner le dépôt GitHub dans l'environnement de build
 
       - name: Set up JDK 17  # Étape 2 : Configuration de l'environnement Java
-        uses: actions/setup-java@v4  # Utilisation de l'action officielle pour configurer Java
+        uses: actions/setup-java@v2  # Utilisation de l'action officielle pour configurer Java
         with:
           java-version: '17'  # Spécifie la version de Java à utiliser (ici Java 17)
           distribution: 'temurin'  # Distribution de JDK utilisée (Temurin, une distribution OpenJDK)
