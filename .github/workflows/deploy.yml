@@ -58,8 +58,21 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws elasticbeanstalk describe-applications --application-names "animal-marketplace" || \
-          aws elasticbeanstalk create-application --application-name "animal-marketplace"
+          if ! aws elasticbeanstalk describe-applications --application-names "animal-marketplace" > /dev/null 2>&1; then
+            echo "Creating Elastic Beanstalk application 'animal-marketplace'..."
+            aws elasticbeanstalk create-application --application-name "animal-marketplace"
+          else
+            echo "Elastic Beanstalk application 'animal-marketplace' already exists."
+          fi
+
+      - name: Debug Elastic Beanstalk applications  # Étape de débogage pour lister les applications existantes
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          echo "Listing existing Elastic Beanstalk applications..."
+          aws elasticbeanstalk describe-applications
 
       - name: Deploy to Elastic Beanstalk  # Étape 9 : Déploiement sur AWS Elastic Beanstalk
         env:
