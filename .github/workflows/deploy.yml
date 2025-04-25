@@ -11,27 +11,27 @@ jobs:
 
     steps:
       - name: Checkout code  # Étape 1 : Récupération du code source
-        uses: actions/checkout@v3  # Mise à jour vers la version 3 de l'action officielle
+        uses: actions/checkout@v3
 
       - name: Set up JDK 17  # Étape 2 : Configuration de l'environnement Java
-        uses: actions/setup-java@v2  # Utilisation de l'action officielle pour configurer Java
+        uses: actions/setup-java@v2
         with:
-          java-version: '17'  # Spécifie la version de Java à utiliser (ici Java 17)
-          distribution: 'temurin'  # Distribution de JDK utilisée (Temurin, une distribution OpenJDK)
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Cache Maven dependencies  # Étape 3 : Mise en cache des dépendances Maven
-        uses: actions/cache@v4  # Utilisation de la version 4 de l'action cache
+        uses: actions/cache@v4
         with:
-          path: ~/.m2  # Chemin du répertoire Maven local à mettre en cache
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}  # Clé unique basée sur le système d'exploitation et le hash du fichier `pom.xml`
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
-            ${{ runner.os }}-m2  # Clé de secours pour restaurer un cache partiel si la clé principale n'est pas trouvée
+            ${{ runner.os }}-m2
 
       - name: Build project  # Étape 4 : Compilation du projet avec Maven
-        run: mvn clean package -DskipTests  # Compile le projet et génère un fichier JAR sans exécuter les tests
+        run: mvn clean package -DskipTests
 
       - name: Archive project  # Étape 5 : Création de l'archive ZIP
-        run: zip -r application.zip . -x ".git/*" "target/*" ".github/*"  # Archive le projet dans un fichier ZIP
+        run: zip -r application.zip . -x ".git/*" "target/*" ".github/*"
 
       - name: Create S3 bucket if it does not exist  # Étape 6 : Création du bucket S3 si nécessaire
         env:
@@ -44,7 +44,7 @@ jobs:
             --region $AWS_REGION \
             --create-bucket-configuration LocationConstraint=$AWS_REGION || true
 
-      - name: Upload to S3  # Étape 7 : Telechargement de l'archive dans S3
+      - name: Upload to S3  # Étape 7 : Téléchargement de l'archive dans S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -52,7 +52,7 @@ jobs:
         run: |
           aws s3 cp application.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-app-bucket/application.zip
 
-      - name: Create Elastic Beanstalk application if it does not exist  # Vérifie et crée l'application si nécessaire
+      - name: Create Elastic Beanstalk application if it does not exist  # Étape 8 : Création de l'application Elastic Beanstalk
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -65,16 +65,18 @@ jobs:
             echo "Elastic Beanstalk application 'animal-marketplace' already exists."
           fi
 
-      - name: Debug Elastic Beanstalk applications  # Étape de débogage pour lister les applications existantes
+      - name: Verify application exists before creating version  # Étape 9 : Vérification de l'existence de l'application
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          echo "Listing existing Elastic Beanstalk applications..."
-          aws elasticbeanstalk describe-applications
+          if ! aws elasticbeanstalk describe-applications --application-names "animal-marketplace" > /dev/null 2>&1; then
+            echo "Error: Application 'animal-marketplace' does not exist. Exiting."
+            exit 1
+          fi
 
-      - name: Deploy to Elastic Beanstalk  # Étape 9 : Déploiement sur AWS Elastic Beanstalk
+      - name: Deploy to Elastic Beanstalk  # Étape 10 : Déploiement sur AWS Elastic Beanstalk
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
