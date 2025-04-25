@@ -6,7 +6,7 @@ on:
       - features  # Le workflow se déclenche uniquement lorsqu'un push est effectué sur la branche "features"
 
 jobs:
-  deploy:  # Nom du job, ici "deploy"
+  deploy: # Nom du job, ici "deploy"
     runs-on: ubuntu-latest  # Le job s'exécute sur une machine virtuelle Ubuntu avec la dernière version disponible
 
     steps:
@@ -58,11 +58,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          if ! aws elasticbeanstalk describe-applications --application-names "animal-marketplace" > /dev/null 2>&1; then
-            echo "Creating Elastic Beanstalk application 'animal-marketplace'..."
-            aws elasticbeanstalk create-application --application-name "animal-marketplace"
+          if ! aws elasticbeanstalk describe-applications --application-names "animalMarketplace" > /dev/null 2>&1; then
+            echo "Creating Elastic Beanstalk application 'animalMarketplace'..."
+            aws elasticbeanstalk create-application --application-name "animalMarketplace"
           else
-            echo "Elastic Beanstalk application 'animal-marketplace' already exists."
+            echo "Elastic Beanstalk application 'animalMarketplace' already exists."
           fi
 
       - name: Verify application exists before creating version  # Étape 9 : Vérification de l'existence de l'application
@@ -71,10 +71,19 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          if ! aws elasticbeanstalk describe-applications --application-names "animal-marketplace" > /dev/null 2>&1; then
-            echo "Error: Application 'animal-marketplace' does not exist. Exiting."
+          if ! aws elasticbeanstalk describe-applications --application-names "animalMarketplace" > /dev/null 2>&1; then
+            echo "Error: Application 'animalMarketplace' does not exist. Exiting."
             exit 1
           fi
+      - name: Debug Elastic Beanstalk applications  # Étape de débogage pour lister les applications existantes
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          echo "Listing existing Elastic Beanstalk applications..."
+          aws elasticbeanstalk describe-applications
+
 
       - name: Deploy to Elastic Beanstalk  # Étape 10 : Déploiement sur AWS Elastic Beanstalk
         env:
@@ -83,12 +92,12 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           aws elasticbeanstalk create-application-version \
-            --application-name "animal-marketplace" \
+            --application-name "animalMarketplace" \
             --version-label "${{ github.sha }}" \
             --source-bundle S3Bucket="elasticbeanstalk-${{ secrets.AWS_REGION }}-app-bucket",S3Key="application.zip" \
             --region $AWS_REGION
           aws elasticbeanstalk update-environment \
-            --application-name "animal-marketplace" \
-            --environment-name "animal-marketplace-env" \
+            --application-name "animalMarketplace" \
+            --environment-name "animalMarketplace-env" \
             --version-label "${{ github.sha }}" \
             --region $AWS_REGION
