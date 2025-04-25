@@ -30,13 +30,23 @@ jobs:
       - name: Build project  # Étape 4 : Compilation du projet avec Maven
         run: mvn clean package -DskipTests  # Compile le projet et génère un fichier JAR sans exécuter les tests
 
-      - name: Deploy to Elastic Beanstalk  # Étape 5 : Déploiement sur AWS Elastic Beanstalk
+      - name: Archive project  # Étape 5 : Création de l'archive ZIP
+        run: zip -r application.zip . -x ".git/*" "target/*" ".github/*"  # Archive le projet dans un fichier ZIP
+
+      - name: Upload to S3  # Étape 6 : Téléchargement de l'archive dans S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          zip -r application.zip . -x ".git/*" "target/*" ".github/*"  # Archive le projet dans un fichier ZIP
+          aws s3 cp application.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-app-bucket/application.zip
+
+      - name: Deploy to Elastic Beanstalk  # Étape 7 : Déploiement sur AWS Elastic Beanstalk
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
           aws elasticbeanstalk create-application-version \
             --application-name "animal-marketplace" \
             --version-label "${{ github.sha }}" \
