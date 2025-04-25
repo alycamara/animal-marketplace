@@ -52,7 +52,7 @@ jobs:
         run: |
           aws s3 cp application.zip s3://elasticbeanstalk-${{ secrets.AWS_REGION }}-app-bucket/application.zip
 
-      - name: Create Elastic Beanstalk application if it does not exist  # Étape 8 : Création de l'application Elastic Beanstalk si nécessaire
+      - name: Create Elastic Beanstalk application if it does not exist  # Vérifie et crée l'application si nécessaire
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
