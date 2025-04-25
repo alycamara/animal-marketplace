@@ -58,16 +58,26 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          echo "Checking if Elastic Beanstalk application 'animalMarketplace' exists..."
+          echo "Vérification de l'existence de l'application Elastic Beanstalk 'animalMarketplace'..."
+          aws elasticbeanstalk describe-applications --application-names "animalMarketplace" || echo "Aucune application trouvée."
           if ! aws elasticbeanstalk describe-applications --application-names "animalMarketplace" > /dev/null 2>&1; then
-            echo "Application 'animalMarketplace' does not exist. Creating it now..."
+            echo "Création de l'application 'animalMarketplace'..."
             aws elasticbeanstalk create-application --application-name "animalMarketplace" || {
-              echo "Error: Failed to create the application 'animalMarketplace'."
+              echo "Erreur : Échec de la création de l'application 'animalMarketplace'."
               exit 1
             }
           else
-            echo "Elastic Beanstalk application 'animalMarketplace' already exists."
+            echo "L'application Elastic Beanstalk 'animalMarketplace' existe déjà."
           fi
+      - name: Debug AWS Configuration
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          echo "Vérification de la configuration AWS..."
+          aws sts get-caller-identity
+          echo "Région configurée : $AWS_REGION"
 
       - name: Verify application exists before creating version  # Étape 9 : Vérification de l'existence de l'application
         env:
