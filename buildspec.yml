@@ -17,12 +17,12 @@ phases:
       - echo "--- Listing target directory ---"
       - ls -lh target/
       - echo "--- Copying JAR to root ---"
-      - cp target/animal-marketplace-0.0.1-SNAPSHOT.jar .
+      - cp target/*.jar .
       - echo "--- Listing current directory ---"
       - ls -lh .
 
 artifacts:
   files:
-    - animal-marketplace-0.0.1-SNAPSHOT.jar
+    - *.jar
     - Procfile
   base-directory: .
