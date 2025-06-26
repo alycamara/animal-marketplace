@@ -14,12 +14,15 @@ phases:
 
   post_build:
     commands:
+      - echo "--- Listing target directory ---"
+      - ls -lh target/
       - echo "--- Copying JAR to root ---"
       - cp target/animal-marketplace-0.0.1-SNAPSHOT.jar .
-      - echo "--- Post build phase done ---"
+      - echo "--- Listing current directory ---"
+      - ls -lh .
 
 artifacts:
   files:
     - animal-marketplace-0.0.1-SNAPSHOT.jar
     - Procfile
-  base-directory: .  # 🔧 Cette ligne est essentielle
+  base-directory: .
