@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - echo "--- Cleaning  Installing Maven --"
+      - echo "--- Cleaning & Installing Maven ---"
       - mvn clean install -DskipTests=true
 
   build:
@@ -14,10 +14,12 @@ phases:
 
   post_build:
     commands:
-      - echo "Copy JAR to root"
+      - echo "--- Copying JAR to root ---"
       - cp target/animal-marketplace-0.0.1-SNAPSHOT.jar .
+      - echo "--- Post build phase done ---"
 
 artifacts:
   files:
     - animal-marketplace-0.0.1-SNAPSHOT.jar
     - Procfile
+  base-directory: .  # 🔧 Cette ligne est essentielle
