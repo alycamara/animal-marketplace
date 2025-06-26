@@ -1,32 +1,13 @@
 version: 0.2
-
 phases:
-  install:
-    runtime-versions:
-      java: corretto17
-    commands:
-      - echo "--- Cleaning & Installing Maven ---"
-      - mvn clean package -DskipTests=true
-
   build:
     commands:
-      - echo "--- Build complete ---"
-
+      - echo Packaging JAR file...
+      - mvn clean package
   post_build:
     commands:
-      - echo "--- Listing target directory ---"
-      - ls -lh target/
-      - echo "--- Copying JAR to root ---"
-      - cp target/*.jar .
-      - echo "--- Listing current directory ---"
-      - ls -lh .
-      - echo "--- Ensuring current directory exists ---"
-      - mkdir -p current
-      - echo "--- Moving JAR to current directory ---"
-      - mv *.jar current/
-
+      - echo Build complete.
 artifacts:
   files:
-    - "current/*.jar"
-    - Procfile
-  base-directory: .
+    - target/animal-marketplace-0.0.1-SNAPSHOT.jar
+  discard-paths: yes
