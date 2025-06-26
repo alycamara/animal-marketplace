@@ -20,6 +20,8 @@ phases:
       - cp target/*.jar .
       - echo "--- Listing current directory ---"
       - ls -lh .
+      - echo "--- Ensuring current directory exists ---"
+      - mkdir -p current
       - echo "--- Moving JAR to current directory ---"
       - mv *.jar current/
 
