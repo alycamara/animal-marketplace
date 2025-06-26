@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo "--- Cleaning  Installing Maven --"
+      - mvn clean install -DskipTests=true
+
+  build:
+    commands:
+      - echo "--- Build complete ---"
+
+  post_build:
+    commands:
+      - echo "Copy JAR to root"
+      - cp target/animal-marketplace-0.0.1-SNAPSHOT.jar .
+
+artifacts:
+  files:
+    - animal-marketplace-0.0.1-SNAPSHOT.jar
+    - Procfile
