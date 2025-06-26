@@ -5,12 +5,12 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - echo "Installing Maven"
+      - echo "--- Installing Maven --"
       - mvn install -DskipTests=true
 
   build:
     commands:
-      - echo "Build complete"
+      - echo "--- Build complete ---"
 
   post_build:
     commands:
