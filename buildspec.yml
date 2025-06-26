@@ -20,9 +20,11 @@ phases:
       - cp target/*.jar .
       - echo "--- Listing current directory ---"
       - ls -lh .
+      - echo "--- Moving JAR to current directory ---"
+      - mv *.jar current/
 
 artifacts:
   files:
-    - "*.jar"
+    - "current/*.jar"
     - Procfile
   base-directory: .
