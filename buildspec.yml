@@ -9,5 +9,5 @@ phases:
       - echo Build complete.
 artifacts:
   files:
-    - target/animal-marketplace-0.0.1-SNAPSHOT.jar
+    - target/animal-marketplace.jar
   discard-paths: yes
