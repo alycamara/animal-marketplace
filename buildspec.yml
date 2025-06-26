@@ -5,8 +5,8 @@ phases:
     runtime-versions:
       java: corretto17
     commands:
-      - echo "--- Installing Maven --"
-      - mvn install -DskipTests=true
+      - echo "--- Cleaning  Installing Maven --"
+      - mvn clean install -DskipTests=true
 
   build:
     commands:
