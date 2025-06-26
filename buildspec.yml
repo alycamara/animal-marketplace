@@ -23,6 +23,6 @@ phases:
 
 artifacts:
   files:
-    - *.jar
+    - "*.jar"
     - Procfile
   base-directory: .
