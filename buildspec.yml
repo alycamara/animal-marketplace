@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo "Installing Maven"
+      - yum install -y maven
+  build:
+    commands:
+      - echo "Building the application"
+      - mvn clean package -DskipTests
+      - mkdir app
+      - cp target/*.jar app/app.jar
+      - echo 'web: java -jar app.jar' > app/Procfile
+  post_build:
+    commands:
+      - echo "Zipping artifacts"
+      - cd app && zip -r ../app.zip . && cd ..
+artifacts:
+  files:
+    - app.zip
