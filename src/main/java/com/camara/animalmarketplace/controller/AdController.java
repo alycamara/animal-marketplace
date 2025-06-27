@@ -2,12 +2,16 @@ package com.camara.animalmarketplace.controller;
 
 import com.camara.animalmarketplace.exception.ResourceNotFoundException;
 import com.camara.animalmarketplace.model.Ad;
+import com.camara.animalmarketplace.model.User;
 import com.camara.animalmarketplace.service.AdService;
 import com.camara.animalmarketplace.service.S3Service;
+import com.camara.animalmarketplace.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,11 +29,13 @@ public class AdController {
 
     private final AdService adService;
     private final S3Service s3Service;
+    private final UserService userService;
 
-    public AdController(AdService adService, S3Service s3Service) {
+    public AdController(AdService adService, S3Service s3Service, UserService userService) {
 
         this.adService = adService;
         this.s3Service = s3Service;
+        this.userService = userService;
     }
 
     @GetMapping()
@@ -42,9 +48,14 @@ public class AdController {
         return "public/list";
     }
 
-    @GetMapping("/create")
+    @GetMapping("/create/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("ad", new Ad());
+
+       User user = userService.getAuthenticatedUser();
+        Ad ad = new Ad();
+        ad.setSeller(user); // Associer l'utilisateur authentifié à l'annonce
+
+        model.addAttribute("ad", ad);
         return "private/create";
     }
 

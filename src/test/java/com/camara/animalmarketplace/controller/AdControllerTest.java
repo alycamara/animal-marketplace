@@ -2,8 +2,10 @@ package com.camara.animalmarketplace.controller;
 
 import com.camara.animalmarketplace.exception.ResourceNotFoundException;
 import com.camara.animalmarketplace.model.Ad;
+import com.camara.animalmarketplace.model.User;
 import com.camara.animalmarketplace.service.AdService;
 import com.camara.animalmarketplace.service.S3Service;
+import com.camara.animalmarketplace.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,6 +30,9 @@ class AdControllerTest {
 
     @Mock
     private S3Service s3Service;
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private Model model;
@@ -62,6 +67,8 @@ class AdControllerTest {
 
     @Test
     void testShowCreateForm() {
+
+        when(userService.getAuthenticatedUser()).thenReturn(new User());
         String viewName = adController.showCreateForm(model);
 
         verify(model).addAttribute(eq("ad"), any(Ad.class));

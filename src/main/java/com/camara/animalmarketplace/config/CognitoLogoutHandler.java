@@ -2,6 +2,7 @@ package com.camara.animalmarketplace.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,17 +19,20 @@ public class CognitoLogoutHandler extends SimpleUrlLogoutSuccessHandler {
     /**
      * The domain of your user pool.
      */
-    private String domain = "https://eu-west-3kgj9eipzs.auth.eu-west-3.amazoncognito.com";
+    @Value("${cognito.domain}")
+    private String domain ;
 
     /**
      * An allowed callback URL.
      */
-    private String logoutRedirectUrl = "<logout uri>";
+    @Value("${cognito.logout-redirect-url}")
+    private String logoutRedirectUrl;
 
     /**
      * The ID of your User Pool Client.
      */
-    private String userPoolClientId = "5b6fl7b124qgid3i07ji8m3m80";
+    @Value("${spring.security.oauth2.client.registration.cognito.client-id}")
+    private String userPoolClientId ;
 
     /**
      * Here, we must implement the new logout URL request. We define what URL to send our request to, and set out client_id and logout_uri parameters.

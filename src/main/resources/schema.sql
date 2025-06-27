@@ -4,7 +4,8 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL,
     phone VARCHAR(255),
     name VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (email)
 );
 
 -- 2. Animal
