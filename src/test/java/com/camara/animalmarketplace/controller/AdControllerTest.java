@@ -57,7 +57,7 @@ class AdControllerTest {
         String viewName = adController.getAllAds(null, null, null, model);
 
         verify(model).addAttribute("ads", ads);
-        assertEquals("ad/list", viewName);
+        assertEquals("public/list", viewName);
     }
 
     @Test
@@ -65,7 +65,7 @@ class AdControllerTest {
         String viewName = adController.showCreateForm(model);
 
         verify(model).addAttribute(eq("ad"), any(Ad.class));
-        assertEquals("ad/create", viewName);
+        assertEquals("private/create", viewName);
     }
 
     @Test
@@ -76,7 +76,7 @@ class AdControllerTest {
         String viewName = adController.getAdById(1L, model);
 
         verify(model).addAttribute("ad", ad);
-        assertEquals("ad/detail", viewName);
+        assertEquals("public/detail", viewName);
     }
 
     @Test
@@ -85,7 +85,7 @@ class AdControllerTest {
 
         String viewName = adController.handleCreateAd(new Ad(), bindingResult, redirectAttributes, files);
 
-        assertEquals("ad/create", viewName);
+        assertEquals("private/create", viewName);
     }
 
     @Test

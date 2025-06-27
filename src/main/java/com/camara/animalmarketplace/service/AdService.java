@@ -92,7 +92,6 @@ public class AdService {
      */
     public Ad createAd(Ad ad, MultipartFile[] files) {
         if (ad.getSeller() != null && ad.getSeller().getId() == null) {
-            ad.getSeller().setRole(Role.SELLER);
             ad.setSeller(userRepository.save(ad.getSeller()));
         }
         if (ad.getAnimal() != null && ad.getAnimal().getId() == null) {
@@ -176,8 +175,8 @@ public class AdService {
                 existingUser.setEmail(sellerDetails.getEmail());
             if (sellerDetails.getName() != null)
                 existingUser.setName(sellerDetails.getName());
-            if (sellerDetails.getRole() != null)
-                existingUser.setRole(sellerDetails.getRole());
+            if (sellerDetails.getPhone() != null)
+                existingUser.setPhone(sellerDetails.getPhone());
             return existingUser;
         } else {
             return userRepository.save(sellerDetails);

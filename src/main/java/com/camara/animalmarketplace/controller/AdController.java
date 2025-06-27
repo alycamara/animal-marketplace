@@ -39,20 +39,20 @@ public class AdController {
                             Model model) {
         List<Ad> ads = adService.findAds(species, location, sort);
         model.addAttribute("ads", ads);
-        return "ad/list";
+        return "public/list";
     }
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("ad", new Ad());
-        return "ad/create";
+        return "private/create";
     }
 
     @GetMapping("/{id}")
     public String getAdById(@PathVariable Long id, Model model) {
         Ad ad = adService.getAdById(id).orElseThrow(() -> new ResourceNotFoundException("Ad not found"));
         model.addAttribute("ad", ad);
-        return "ad/detail";
+        return "public/detail";
     }
 
 
@@ -62,7 +62,7 @@ public class AdController {
         logger.info("Création de l'annonce : {}", ad);
         if (result.hasErrors()) {
             logger.error("Erreur lors de la création de l'annonce : {}", result.getAllErrors());
-            return "ad/create"; // Retourne le formulaire avec les erreurs
+            return "private/create"; // Retourne le formulaire avec les erreurs
         }
 
         adService.createAd(ad, files); // Sauvegarde de l'annonce
@@ -75,7 +75,7 @@ public class AdController {
     public String showEditForm(@PathVariable Long id, Model model) {
         Ad ad = findAdByIdOrThrow(id);
         model.addAttribute("ad", ad);
-        return "ad/edit";
+        return "private/edit";
     }
 
     @PostMapping("/update/{id}")
@@ -101,7 +101,7 @@ public class AdController {
     public String showDeleteForm(@PathVariable Long id, Model model) {
         Ad ad = findAdByIdOrThrow(id);
         model.addAttribute("ad", ad);
-        return "ad/delete";
+        return "private/delete";
     }
 
     @PostMapping("/delete/{id}")
