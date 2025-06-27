@@ -1,1 +1,1 @@
-web: java -jar animal-marketplace-0.0.1-SNAPSHOT.jar
+web: java -jar animal-marketplace.jar
