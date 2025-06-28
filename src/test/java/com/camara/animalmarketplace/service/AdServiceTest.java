@@ -99,6 +99,9 @@ class AdServiceTest {
     void testUpdateAd() {
         // Test de la méthode updateAd pour mettre à jour une annonce existante
         Ad ad = new Ad();
+        User seller = new User();
+        seller.setEmail("test.com");
+        ad.setSeller(seller);
         ad.setId(1L);
         when(adRepository.findById(1L)).thenReturn(Optional.of(ad));
 
@@ -106,6 +109,16 @@ class AdServiceTest {
         Ad updatedAd = new Ad();
         updatedAd.setTitle("Updated Title");
         updatedAd.setPrice(100.0);
+        User sellerUpdated = new User();
+        sellerUpdated.setEmail("test.com");
+        updatedAd.setSeller(sellerUpdated);
+
+        // Vérification que les détails du vendeur ne sont pas nuls
+        assertNotNull(updatedAd.getSeller(), "Les détails du vendeur ne doivent pas être null");
+        assertNotNull(updatedAd.getSeller().getEmail(), "L'email du vendeur ne doit pas être null");
+
+        when(adRepository.save(any(Ad.class))).thenReturn(ad); // Simule la sauvegarde de l'annonce mise à jour
+        when(userService.findByEmail("test.com")).thenReturn(seller); // Simule la récupération du vendeur par email
 
         // Appel de la méthode
         adService.updateAd(1L, updatedAd, new MultipartFile[0], null);
@@ -140,19 +153,27 @@ class AdServiceTest {
         // Test de la méthode updateOrCreateSeller pour mettre à jour ou créer un vendeur
         User seller = new User();
         seller.setId(1L);
-        seller.setEmail("test@example.com");
-        when(userService.findById(1L)).thenReturn(seller);
+        seller.setPhone("0712345678");
+        seller.setName("Christian");
+        seller.setEmail("christian@test.com");
+        when(userService.findByEmail("christian@test.com")).thenReturn(seller);
+
+        // Vérification que l'email du vendeur n'est pas null
+        assertNotNull(seller.getEmail(), "L'email du vendeur ne doit pas être null");
 
         // Création d'un vendeur mis à jour
         User updatedSeller = new User();
         updatedSeller.setId(1L);
-        updatedSeller.setEmail("updated@example.com");
+        updatedSeller.setPhone("0712345678");
+        updatedSeller.setName("Christian Updated");
+        updatedSeller.setEmail("christian@test.com");
+        when(userService.save(seller)).thenReturn(updatedSeller);
 
         // Appel de la méthode
         User result = adService.updateOrCreateSeller(updatedSeller);
 
         // Vérifications
-        assertEquals("updated@example.com", result.getEmail()); // Vérifie que l'email du vendeur a été mis à jour
-        verify(userService, times(1)).findById(1L); // Vérifie que la méthode findById a été appelée une fois
+        assertNotNull(result); // Vérifie que le résultat n'est pas nul
+        assertEquals("Christian Updated", result.getName()); // Vérifie que le nom du vendeur a été mis à jour
     }
 }

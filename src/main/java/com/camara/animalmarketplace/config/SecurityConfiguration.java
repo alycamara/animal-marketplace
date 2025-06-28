@@ -28,7 +28,10 @@ public class SecurityConfiguration {
                         //.requestMatchers("/private/**").authenticated() // Accès privé
                         .anyRequest().authenticated())
                 .oauth2Login(Customizer.withDefaults())
-                .logout(logout -> logout.logoutSuccessHandler(cognitoLogoutHandler));
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // URL explicite pour la déconnexion
+                        .logoutSuccessHandler(cognitoLogoutHandler) // Gestionnaire de déconnexion
+                        .permitAll()); // Permet l'accès à l'URL de déconnexion
         return http.build();
     }
 }

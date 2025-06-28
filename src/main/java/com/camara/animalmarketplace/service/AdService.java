@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -176,18 +177,22 @@ public class AdService {
      * @return
      */
     public User updateOrCreateSeller(User sellerDetails) {
-        if (sellerDetails.getId() != null) {
-            User existingUser = userService.findById(sellerDetails.getId());
-            if (sellerDetails.getEmail() != null)
-                existingUser.setEmail(sellerDetails.getEmail());
-            if (sellerDetails.getName() != null)
-                existingUser.setName(sellerDetails.getName());
-            if (sellerDetails.getPhone() != null)
-                existingUser.setPhone(sellerDetails.getPhone());
-            return existingUser;
-        } else {
-            return userService.save(sellerDetails);
+        if (sellerDetails == null || sellerDetails.getEmail() == null) {
+            throw new IllegalArgumentException("Seller details or email cannot be null");
         }
+
+        User existingUser = userService.findByEmail(sellerDetails.getEmail());
+        if (existingUser == null) {
+            throw new ResourceNotFoundException("User not found with email: " + sellerDetails.getEmail());
+        }
+
+        if (sellerDetails.getName() != null || sellerDetails.getPhone() != null) {
+            existingUser.setName(sellerDetails.getName());
+            existingUser.setPhone(sellerDetails.getPhone());
+            return userService.save(existingUser);
+        }
+
+        return existingUser;
     }
 
     /**
