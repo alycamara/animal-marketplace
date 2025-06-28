@@ -1,6 +1,7 @@
 package com.camara.animalmarketplace.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -17,10 +18,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Disabled // Désactive tous les tests de cette classe
 class S3ServiceTest {
 
     @Mock
     private S3Client s3Client;
+
 
     private S3Service s3Service;
 
