@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Créer une annonce</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-3">
+  <div th:if="${successMessage}" class="alert alert-success" role="alert">
+    <span th:text="${successMessage}"></span>
+  </div>
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <h1 class="text-center text-primary mb-4">Créer une nouvelle annonce</h1>
+  <form th:action="@{/ads}" th:object="${ad}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+
+    <!-- Section Vendeur -->
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white">
+        <h5>Informations sur le vendeur</h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="sellerName">Nom:</label>
+          <input type="text" id="sellerName" th:field="*{seller.name}" th:value="${ad.seller.name}" class="form-control" placeholder="Nom du vendeur">
+        </div>
+        <div class="form-group">
+          <label for="sellerEmail">Email:</label>
+          <input type="email" id="sellerEmail" th:field="*{seller.email}" th:value="${ad.seller.email}" class="form-control" placeholder="Email du vendeur" required readonly>
+        </div>
+        <div class="form-group">
+          <label for="sellerPhone">Téléphone:</label>
+          <input type="text" id="sellerPhone" th:field="*{seller.phone}" th:value="${ad.seller.phone}" class="form-control" placeholder="Téléphone du vendeur">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Annonce -->
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h5>Informations sur l'annonce</h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="title">Titre:</label>
+          <input type="text" id="title" th:field="*{title}" class="form-control" placeholder="Titre de l'annonce" required>
+        </div>
+        <div class="form-group">
+          <label for="price">Prix (€):</label>
+          <input type="number" id="price" th:field="*{price}" class="form-control" placeholder="Prix de l'annonce" required>
+        </div>
+        <div class="form-group">
+          <label for="location">Localisation:</label>
+          <input type="text" id="location" th:field="*{location}" class="form-control" placeholder="Ville ou région" required>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Animal -->
+    <div class="card mb-4">
+      <div class="card-header bg-success text-white">
+        <h5>Informations sur l'animal</h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="species">Espèce:</label>
+          <input type="text" id="species" th:field="*{animal.species}" class="form-control" placeholder="Espèce de l'animal" required>
+        </div>
+        <div class="form-group">
+          <label for="sex">Sexe:</label>
+          <select id="sex" th:field="*{animal.sex}" class="form-control" required>
+            <option value="" disabled selected>Choisir le sexe</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Femelle</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="age">Age (en années):</label>
+          <input type="number" id="age" th:field="*{animal.age}" class="form-control" placeholder="Âge de l'animal" required>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Photos -->
+    <div class="card mb-4">
+      <div class="card-header bg-info text-white">
+        <h5>Photos</h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label for="formFileMultiple" class="form-label">Ajouter des photos de l'annonce</label>
+          <input type="file" id="formFileMultiple" class="form-control" name="uploadedPhotos" multiple  required>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary">Créer l'annonce</button>
+      <a href="/ads" class="btn btn-secondary">Retour à la liste</a>
+    </div>
+  </form>
+</div>
+<script>
+  document.getElementById('formFileMultiple').addEventListener('change', function () {
+    const maxFileSize = 5*1048576
+    const files = Array.from(this.files);
+
+    for (const file of files) {
+      if (file.size > maxFileSize) {
+        alert(`Erreur : Les fichiers  dépassent la taille maximale de 1 Mo.`);
+        this.value = ''; // Réinitialise l'input
+        return;
+      }
+    }
+  });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

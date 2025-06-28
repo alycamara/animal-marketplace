@@ -38,17 +38,17 @@ INSERT INTO ad (title, price, location, created_at, animal_id, seller_id) VALUES
 ('Majestic Maine Coon', 400.00, 'Rennes', CURRENT_TIMESTAMP, 10, 8);
 
 -- Insertion de données dans la table photo
-INSERT INTO photo (url, uploaded_at, ad_id) VALUES
-('/images/chat.JPEG', CURRENT_TIMESTAMP, 1),
-('/images/chien.JPEG', CURRENT_TIMESTAMP, 2),
-('/images/boeuf.JPEG', CURRENT_TIMESTAMP, 3),
-('/images/dromadaire.JPEG', CURRENT_TIMESTAMP, 4),
-('/images/chameau.JPEG', CURRENT_TIMESTAMP, 5),
-('/images/chevre.JPEG', CURRENT_TIMESTAMP, 6),
-('/images/cheval.JPEG', CURRENT_TIMESTAMP, 7),
-('/images/lapin.JPEG', CURRENT_TIMESTAMP, 8),
-('/images/ane.JPEG', CURRENT_TIMESTAMP, 9),
-('/images/mouton.JPEG', CURRENT_TIMESTAMP, 10);
+INSERT INTO photo (url, file_name,uploaded_at, ad_id) VALUES
+('/images/chat.JPEG','chat.JPEG',CURRENT_TIMESTAMP, 1),
+('/images/chien.JPEG','chien.JPEG',CURRENT_TIMESTAMP, 2),
+('/images/boeuf.JPEG','boeuf.JPEG',CURRENT_TIMESTAMP, 3),
+('/images/dromadaire.JPEG','dromadaire.JPEG',CURRENT_TIMESTAMP, 4),
+('/images/chameau.JPEG','chameau.JPEG',CURRENT_TIMESTAMP, 5),
+('/images/chevre.JPEG','chevre.JPEG',CURRENT_TIMESTAMP, 6),
+('/images/cheval.JPEG','cheval.JPEG', CURRENT_TIMESTAMP, 7),
+('/images/lapin.JPEG','lapin.JPEG',CURRENT_TIMESTAMP, 8),
+('/images/ane.JPEG','ane.JPEG',CURRENT_TIMESTAMP, 9),
+('/images/mouton.JPEG','mouton.JPEG',CURRENT_TIMESTAMP, 10);
 
 -- Insertion de données dans la table contact_request
 INSERT INTO contact_request (ad_id, sender_id, content, sent_at) VALUES
@@ -67,3 +67,6 @@ INSERT INTO contact_request (ad_id, sender_id, content, sent_at) VALUES
 UPDATE photo
 SET url = '/images/lapin.JPEG'
 WHERE id = 8;
+
+ALTER TABLE photo
+ADD COLUMN file_name VARCHAR(255) NOT NULL;

@@ -2,12 +2,16 @@ package com.camara.animalmarketplace.controller;
 
 import com.camara.animalmarketplace.exception.ResourceNotFoundException;
 import com.camara.animalmarketplace.model.Ad;
+import com.camara.animalmarketplace.model.User;
 import com.camara.animalmarketplace.service.AdService;
 import com.camara.animalmarketplace.service.S3Service;
+import com.camara.animalmarketplace.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,11 +29,13 @@ public class AdController {
 
     private final AdService adService;
     private final S3Service s3Service;
+    private final UserService userService;
 
-    public AdController(AdService adService, S3Service s3Service) {
+    public AdController(AdService adService, S3Service s3Service, UserService userService) {
 
         this.adService = adService;
         this.s3Service = s3Service;
+        this.userService = userService;
     }
 
     @GetMapping()
@@ -39,20 +45,33 @@ public class AdController {
                             Model model) {
         List<Ad> ads = adService.findAds(species, location, sort);
         model.addAttribute("ads", ads);
-        return "ad/list";
+        return "public/list";
     }
 
-    @GetMapping("/create")
+    @GetMapping("/create/new")
     public String showCreateForm(Model model) {
-        model.addAttribute("ad", new Ad());
-        return "ad/create";
+
+       User user = userService.getAuthenticatedUser();
+        Ad ad = new Ad();
+        ad.setSeller(user); // Associer l'utilisateur authentifié à l'annonce
+
+        model.addAttribute("ad", ad);
+        return "private/create";
     }
 
     @GetMapping("/{id}")
     public String getAdById(@PathVariable Long id, Model model) {
         Ad ad = adService.getAdById(id).orElseThrow(() -> new ResourceNotFoundException("Ad not found"));
+        User authenticatedUser = userService.getAuthenticatedUser();
+
+        if (authenticatedUser != null && ad.getSeller().getEmail().equals(authenticatedUser.getEmail())) {
+            ad.setOwner(true); // Définir si l'utilisateur est propriétaire
+        } else {
+            ad.setOwner(false);
+        }
+
         model.addAttribute("ad", ad);
-        return "ad/detail";
+        return "public/detail";
     }
 
 
@@ -62,7 +81,7 @@ public class AdController {
         logger.info("Création de l'annonce : {}", ad);
         if (result.hasErrors()) {
             logger.error("Erreur lors de la création de l'annonce : {}", result.getAllErrors());
-            return "ad/create"; // Retourne le formulaire avec les erreurs
+            return "private/create"; // Retourne le formulaire avec les erreurs
         }
 
         adService.createAd(ad, files); // Sauvegarde de l'annonce
@@ -75,7 +94,7 @@ public class AdController {
     public String showEditForm(@PathVariable Long id, Model model) {
         Ad ad = findAdByIdOrThrow(id);
         model.addAttribute("ad", ad);
-        return "ad/edit";
+        return "private/edit";
     }
 
     @PostMapping("/update/{id}")
@@ -101,7 +120,7 @@ public class AdController {
     public String showDeleteForm(@PathVariable Long id, Model model) {
         Ad ad = findAdByIdOrThrow(id);
         model.addAttribute("ad", ad);
-        return "ad/delete";
+        return "private/delete";
     }
 
     @PostMapping("/delete/{id}")

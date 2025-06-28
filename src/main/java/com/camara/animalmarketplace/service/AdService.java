@@ -5,7 +5,6 @@ import com.camara.animalmarketplace.model.*;
 import com.camara.animalmarketplace.repository.AdRepository;
 import com.camara.animalmarketplace.repository.AnimalRepository;
 import com.camara.animalmarketplace.repository.PhotoRepository;
-import com.camara.animalmarketplace.repository.UserRepository;
 import com.camara.animalmarketplace.specification.AdSpecifications;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,17 +24,17 @@ import java.util.Optional;
 public class AdService {
 
     private final AdRepository adRepository;
-    private final UserRepository userRepository;
     private final AnimalRepository animalRepository;
     private final S3Service s3Service;
     private final PhotoRepository photoRepository;
+    private final UserService userService;
 
-    public AdService(AdRepository adRepository, UserRepository userRepository, AnimalRepository animalRepository, S3Service s3Service, PhotoRepository photoRepository) {
+    public AdService(AdRepository adRepository,  AnimalRepository animalRepository, S3Service s3Service, PhotoRepository photoRepository, UserService userService) {
         this.adRepository = adRepository;
-        this.userRepository = userRepository;
         this.animalRepository = animalRepository;
         this.s3Service = s3Service;
         this.photoRepository = photoRepository;
+        this.userService = userService;
     }
 
     /**
@@ -91,9 +91,17 @@ public class AdService {
      * @return
      */
     public Ad createAd(Ad ad, MultipartFile[] files) {
-        if (ad.getSeller() != null && ad.getSeller().getId() == null) {
-            ad.getSeller().setRole(Role.SELLER);
-            ad.setSeller(userRepository.save(ad.getSeller()));
+
+
+        User existingUser = userService.findByEmail(ad.getSeller().getEmail());
+
+        if (ad.getSeller() != null && existingUser == null) {
+         //   User user = userService.getAuthenticatedUser();
+           // ad.getSeller().setPhone(user.getPhone());
+            //ad.getSeller().setEmail(user.getEmail());
+            ad.setSeller(userService.save(ad.getSeller()));
+        } else {
+            ad.setSeller(existingUser);
         }
         if (ad.getAnimal() != null && ad.getAnimal().getId() == null) {
             ad.setAnimal(animalRepository.save(ad.getAnimal()));
@@ -169,19 +177,22 @@ public class AdService {
      * @return
      */
     public User updateOrCreateSeller(User sellerDetails) {
-        if (sellerDetails.getId() != null) {
-            User existingUser = userRepository.findById(sellerDetails.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Seller not found"));
-            if (sellerDetails.getEmail() != null)
-                existingUser.setEmail(sellerDetails.getEmail());
-            if (sellerDetails.getName() != null)
-                existingUser.setName(sellerDetails.getName());
-            if (sellerDetails.getRole() != null)
-                existingUser.setRole(sellerDetails.getRole());
-            return existingUser;
-        } else {
-            return userRepository.save(sellerDetails);
+        if (sellerDetails == null || sellerDetails.getEmail() == null) {
+            throw new IllegalArgumentException("Seller details or email cannot be null");
         }
+
+        User existingUser = userService.findByEmail(sellerDetails.getEmail());
+        if (existingUser == null) {
+            throw new ResourceNotFoundException("User not found with email: " + sellerDetails.getEmail());
+        }
+
+        if (sellerDetails.getName() != null || sellerDetails.getPhone() != null) {
+            existingUser.setName(sellerDetails.getName());
+            existingUser.setPhone(sellerDetails.getPhone());
+            return userService.save(existingUser);
+        }
+
+        return existingUser;
     }
 
     /**
@@ -196,8 +207,6 @@ public class AdService {
                     .orElseThrow(() -> new ResourceNotFoundException("Animal not found"));
             if (animalDetails.getSpecies() != null)
                 existingAnimal.setSpecies(animalDetails.getSpecies());
-            if (animalDetails.getBreed() != null)
-                existingAnimal.setBreed(animalDetails.getBreed());
 
             existingAnimal.setAge(animalDetails.getAge());
             if (animalDetails.getSex() != null)

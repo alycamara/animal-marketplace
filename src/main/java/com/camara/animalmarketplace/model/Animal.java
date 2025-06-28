@@ -10,7 +10,6 @@ public class Animal {
     private Long id;
 
     private String species;
-    private String breed;
     private int age;
 
     @Enumerated(EnumType.STRING)
@@ -33,14 +32,6 @@ public class Animal {
 
     public void setSpecies(String species) {
         this.species = species;
-    }
-
-    public String getBreed() {
-        return breed;
-    }
-
-    public void setBreed(String breed) {
-        this.breed = breed;
     }
 
     public int getAge() {
