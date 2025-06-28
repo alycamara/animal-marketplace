@@ -62,6 +62,14 @@ public class AdController {
     @GetMapping("/{id}")
     public String getAdById(@PathVariable Long id, Model model) {
         Ad ad = adService.getAdById(id).orElseThrow(() -> new ResourceNotFoundException("Ad not found"));
+        User authenticatedUser = userService.getAuthenticatedUser();
+
+        if (authenticatedUser != null && ad.getSeller().getEmail().equals(authenticatedUser.getEmail())) {
+            ad.setOwner(true); // Définir si l'utilisateur est propriétaire
+        } else {
+            ad.setOwner(false);
+        }
+
         model.addAttribute("ad", ad);
         return "public/detail";
     }
