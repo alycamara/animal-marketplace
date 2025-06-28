@@ -10,6 +10,23 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Modifier l'annonce</h1>
     <form th:action="@{/ads/update/{id}(id=${ad.id})}" th:object="${ad}" method="post" enctype="multipart/form-data">
+
+        <!-- Informations de l'utilisateur -->
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h2 class="h5">Informations de l'utilisateur</h2>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nom d'utilisateur:</label>
+                    <input type="text" id="name" th:field="*{seller.name}" class="form-control" readonly />
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" id="email" th:field="*{seller.email}" class="form-control" readonly/>
+                </div>
+            </div>
+        </div>
         <!-- Informations de l'annonce -->
         <div class="mb-4">
             <label for="title" class="form-label">Titre:</label>
@@ -35,12 +52,8 @@
                     <input type="text" id="species" th:field="*{animal.species}" class="form-control" />
                 </div>
                 <div class="mb-3">
-                    <label for="age" class="form-label">Âge:</label>
+                    <label for="age" class="form-label">Age:</label>
                     <input type="number" id="age" th:field="*{animal.age}" class="form-control" />
-                </div>
-                <div class="mb-3">
-                    <label for="breed" class="form-label">Race:</label>
-                    <input id="breed" th:field="*{animal.breed}" class="form-control"></input>
                 </div>
                 <div class="mb-3">
                     <label for="sex" class="form-label">Sexe:</label>
@@ -53,22 +66,6 @@
             </div>
         </div>
 
-        <!-- Informations de l'utilisateur -->
-        <div class="card mb-4">
-            <div class="card-header bg-secondary text-white">
-                <h2 class="h5">Informations de l'utilisateur</h2>
-            </div>
-            <div class="card-body">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Nom d'utilisateur:</label>
-                    <input type="text" id="name" th:field="*{seller.name}" class="form-control" readonly />
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" id="email" th:field="*{seller.email}" class="form-control" />
-                </div>
-            </div>
-        </div>
         <!-- Photos -->
         <div class="card mb-4">
             <div class="card-header bg-secondary text-white">

@@ -36,12 +36,3 @@ CREATE TABLE photo (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ad_id CHAR(36) REFERENCES ad(id) ON DELETE CASCADE
 );
-
--- 5. Contact / Message
-CREATE TABLE contact_request (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ad_id CHAR(36) REFERENCES ad(id) ON DELETE CASCADE,
-    sender_id CHAR(36) REFERENCES users(id) ON DELETE CASCADE,
-    content TEXT,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);

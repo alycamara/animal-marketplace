@@ -37,6 +37,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email); // Appel de la méthode de recherche
+    }
+
     public User getAuthenticatedUser() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -48,12 +53,10 @@ public class UserService {
                 DefaultOidcUser oidcUser = (DefaultOidcUser) principal;
 
                 String phone = oidcUser.getPhoneNumber() ;
-                String name = oidcUser.getName();// Assurez-vous que `credentials` contient le téléphone
                 String email = oidcUser.getEmail(); // Assurez-vous que `credentials` contient l'email
 
                 User user = new User();
                 user.setEmail(email);
-                user.setName(name);
                 user.setPhone(phone);
                 return user;
             }

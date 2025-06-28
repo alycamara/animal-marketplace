@@ -13,13 +13,26 @@
         </div>
         <div class="card-body">
 
+            <!-- Section Sur le vendeur -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <p class="h6"> Informations sur le vendeur</p>
+                </div>
+                <div class="card-body" th:if="${ad.seller != null}">
+                    <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.seller.name}"></span></p>
+                    <p class="card-text"><strong>Téléphone: </strong> <span th:text="${ad.seller.phone}"></span> </p>
+                    <p class="card-text"><strong>Email:</strong> <span th:text="${ad.seller.email}"></span> </p>
+
+                </div>
+            </div>
+
            <div class="card mt-3">
                <div class="card-header text-center">
                </div>
                <div class="card-body">
                    <p class="card-text"><strong>Prix:</strong> <span th:text="${ad.price}"></span> €</p>
                    <p class="card-text"><strong>Localisation:</strong> <span th:text="${ad.location}"></span></p>
-                   <p class="card-text"><strong>Date de création:</strong> <span th:text="${ad.createdAt}"></span></p>
+                   <p class="card-text"><strong>Date de création:</strong> <span th:text="${#temporals.format(ad.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
                </div>
            </div>
 
@@ -30,6 +43,7 @@
                 Date de création
             </p>-->
 
+
             <!-- Section Animal -->
             <div class="card mt-3">
                 <div class="card-header">
@@ -37,21 +51,7 @@
                 </div>
                 <div class="card-body" th:if="${ad.animal != null}">
                     <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.animal.species}"></span></p>
-                    <p class="card-text"><strong>Type: </strong> <span th:text="${ad.animal.breed}"></span></p>
                     <p class="card-text"><strong>Age:</strong> <span th:text="${ad.animal.age}"></span> ans</p>
-
-                </div>
-            </div>
-
-            <!-- Section Sur le vendeur -->
-            <div class="card mt-3">
-                <div class="card-header">
-                    <p class="h6"> Informations sur le vendeur</p>
-                </div>
-                <div class="card-body" th:if="${ad.seller != null}">
-                    <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.seller.name}"></span></p>
-                    <p class="card-text"><strong>Téléphone: </strong> </p>
-                    <p class="card-text"><strong>Email:</strong> <span th:text="${ad.seller.email}"></span> </p>
 
                 </div>
             </div>

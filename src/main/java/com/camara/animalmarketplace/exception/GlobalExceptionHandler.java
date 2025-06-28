@@ -1,5 +1,6 @@
 package com.camara.animalmarketplace.exception;
 
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.IOException;
 /**
  * Gestionnaire global des exceptions
  * Cette classe gère les exceptions qui peuvent survenir dans l'application.
@@ -43,7 +43,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public String handleGeneralException(Exception ex, Model model) {
-        String errorId = java.util.UUID.randomUUID().toString(); // Génère un identifiant unique
+
+        // Gestion des autres exceptions générales
+        String errorId = java.util.UUID.randomUUID().toString();
         logger.error("Une erreur inattendue est survenue (ID: {}): {}", errorId, ex.getMessage(), ex);
         model.addAttribute("errorMessage", "Une erreur inattendue est survenue. Veuillez réessayer plus tard. (ID: " + errorId + ")");
         return "redirect:/ads"; // Redirection vers la liste des annonces
@@ -63,6 +65,7 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorMessage", "Une erreur est survenue avec le service S3 AWS. Veuillez réessayer plus tard. (ID: " + errorId + ")");
         return "redirect:/ads"; // Redirection vers la liste des annonces
     }
+
 
 
 }
