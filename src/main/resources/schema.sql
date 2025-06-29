@@ -2,10 +2,10 @@
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NULL,
+    phone VARCHAR(255),
     name VARCHAR(100),
-    role ENUM('BUYER', 'SELLER'),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (email)
 );
 
 -- 2. Animal
@@ -35,13 +35,4 @@ CREATE TABLE photo (
 	file_name VARCHAR (255) NOT NULL,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ad_id CHAR(36) REFERENCES ad(id) ON DELETE CASCADE
-);
-
--- 5. Contact / Message
-CREATE TABLE contact_request (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    ad_id CHAR(36) REFERENCES ad(id) ON DELETE CASCADE,
-    sender_id CHAR(36) REFERENCES users(id) ON DELETE CASCADE,
-    content TEXT,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -21,6 +21,16 @@ public class Ad {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    public boolean isOwner() {
+        return isOwner;
+    }
+
+    public void setOwner(boolean owner) {
+        isOwner = owner;
+    }
+
+    private boolean isOwner;
+
     @ManyToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "animal_id", nullable = true)
     private Animal animal = new Animal();

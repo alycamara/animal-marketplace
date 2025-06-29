@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header text-center">
+            <p class="h4 text-primary text-center" th:text="${ad.title}">Titre de l'annonce</p>
+        </div>
+        <div class="card-body">
+
+            <!-- Section Sur le vendeur -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <p class="h6"> Informations sur le vendeur</p>
+                </div>
+                <div class="card-body" th:if="${ad.seller != null}">
+                    <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.seller.name}"></span></p>
+                    <p class="card-text"><strong>Téléphone: </strong> <span th:text="${ad.seller.phone}"></span> </p>
+                    <p class="card-text"><strong>Email:</strong> <span th:text="${ad.seller.email}"></span> </p>
+
+                </div>
+            </div>
+
+           <div class="card mt-3">
+               <div class="card-header text-center">
+               </div>
+               <div class="card-body">
+                   <p class="card-text"><strong>Prix:</strong> <span th:text="${ad.price}"></span> €</p>
+                   <p class="card-text"><strong>Localisation:</strong> <span th:text="${ad.location}"></span></p>
+                   <p class="card-text"><strong>Date de création:</strong> <span th:text="${#temporals.format(ad.createdAt, 'dd/MM/yyyy HH:mm')}"></span></p>
+               </div>
+           </div>
+
+            <!--<p class="fs-5" th:text="'Prix: ' + ${ad.price}">Prix</p>
+            <p class="fs-5" th:text="'Localisation: ' + ${ad.location}">Localisation</p>
+            &lt;!&ndash;            <p class="fs-5" th:text="'Date de création: ' + ${#dates.format(ad.createdAt, 'dd/MM/yyyy HH:mm')}">&ndash;&gt;
+            <p class="fs-5" th:text="'Date de création: ' + ${ad.createdAt}">
+                Date de création
+            </p>-->
+
+
+            <!-- Section Animal -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <p class="h6"> Informations sur l'animal</p>
+                </div>
+                <div class="card-body" th:if="${ad.animal != null}">
+                    <p class="card-text"><strong>Nom:</strong> <span th:text="${ad.animal.species}"></span></p>
+                    <p class="card-text"><strong>Age:</strong> <span th:text="${ad.animal.age}"></span> ans</p>
+
+                </div>
+            </div>
+
+
+            <!-- Image Carousel -->
+            <div id="adImagesCarousel" class="carousel slide mt-4" data-ride="carousel" th:if="${ad.photos.size() > 0}">
+                <!-- Indicateurs -->
+                <ol class="carousel-indicators">
+                   <li th:each="photo, iterStat : ${ad.photos}" th:data-target="'#adImagesCarousel'" th:data-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0 ? 'active' : ''}"></li>
+                </ol>
+
+                <!-- Images du carousel -->
+                <div class="carousel-inner">
+                    <div class="carousel-item" th:each="photo, iterStat : ${ad.photos}" th:classappend="${iterStat.index == 0 ? 'active' : ''}">
+                        <img th:src="${photo.url}" class="d-block w-100" alt="Image de l'annonce">
+                    </div>
+                </div>
+
+                <!-- Contrôles -->
+                <a class="carousel-control-prev" href="#adImagesCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Précédent</span>
+                </a>
+                <a class="carousel-control-next" href="#adImagesCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Suivant</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a class="btn btn-primary me-2" th:href="@{/ads/edit/{id}(id=${ad.id})}" th:if="${ad.isOwner}">Modifier</a>
+            <a class="btn btn-danger me-2" th:href="@{/ads/delete/{id}(id=${ad.id})}" th:if="${ad.isOwner}">Supprimer</a>
+            <a class="btn btn-secondary" href="/ads">Retour à la liste</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>
